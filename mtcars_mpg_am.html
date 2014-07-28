@@ -58,7 +58,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <div id="executive-summary" class="section level2">
 <h2>Executive Summary</h2>
 <ol style="list-style-type: decimal">
-<li>This analysis attempts to quantify the impact of selecting a manual or an automatic transmission on vehicle fuel economy, by reference to Road and Track Magazine’s list of 32 vehicles from 1974. It attempts to mathematically model the characteristics determining fuel economy of existing cars and isolate the dependence on transmission type from other factors.<br /></li>
+<li>This analysis attempts to quantify the impact of selecting a manual or an automatic transmission on vehicle fuel economy, by reference to <a href="http://stat.ethz.ch/R-manual/R-devel/library/datasets/html/mtcars.html">Road and Track Magazine’s list of 32 vehicles from 1974</a>. It attempts to mathematically model the characteristics determining fuel economy of existing cars and isolate the dependence on transmission type from other factors.<br /></li>
 <li>The model predicts an improvement of 2.9 miles per gallon from a manual transmission as compared with an automatic. However, the data do not compellingly support the reliability of the model.</li>
 <li>Recommendation: <strong>Do not use the model’s result</strong>. Augment the dataset with paired manual and automatic transmission versions of the same make and model and repeat the analysis.</li>
 </ol>
@@ -93,17 +93,18 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <pre class="r"><code>model.all &lt;- lm(mpg ~ factor(am) + factor(cyl) + disp + hp + drat + wt + qsec + gear + carb, mtcars)
 model1 &lt;- step(model.all)</code></pre>
 </div>
-<div id="table-of-mpg-vs-marginal-change-in-regressor-values-with-p-values-for-model-1" class="section level4">
-<h4><a name="summary"></a>TABLE OF MPG VS MARGINAL CHANGE IN REGRESSOR VALUES WITH P-VALUES FOR MODEL 1</h4>
+<div id="table-of-mpg-vs-marginal-change-in-regressors-with-95-confidence-for-model-1" class="section level4">
+<h4><a name="summary"></a>TABLE OF MPG VS MARGINAL CHANGE IN REGRESSORS WITH 95% CONFIDENCE FOR MODEL 1</h4>
 <pre><code>## lm(formula = mpg ~ factor(am) + wt + qsec, data = mtcars)</code></pre>
-<pre><code>##                                   Estimate  Pr(&gt;|t|)
-## am: manual transmission              2.936 4.672e-02
-## wt: per 1000 pounds weight          -3.917 6.953e-06
-## qsec: per second of 1/4 mile time    1.226 2.162e-04</code></pre>
+<pre><code>##                                   Estimate    lower  upper p-value
+## Base MPG                             9.618 -4.63830 23.874   0.178
+## am: manual transmission              2.936  0.04573  5.826   0.047
+## wt: per 1000 pounds weight          -3.917 -5.37333 -2.460   0.000
+## qsec: per second of 1/4 mile time    1.226  0.63457  1.817   0.000</code></pre>
 <ul>
 <li>All 3 predictors have a p-value below 0.05. However, the am factor (transmission type) p-value is barely below this threshold.</li>
 <li>The Adjusted <strong>R squared value of 0.83</strong> suggests the model is a good fit.</li>
-<li>If the AIC report is credible, we reject the null hypothesis and include 3 predictors in the model, noting the marginal statistical significance for the transmission type factor. The model then predicts manual transmission increases fuel economy by approximately 2.9 MPG, assuming we make no other changes.</li>
+<li>If the AIC report is credible, we reject the null hypothesis and include 3 predictors in the model, noting the marginal statistical significance for the transmission type factor. The model then predicts manual transmission increases fuel economy by an expected <strong>2.9</strong> MPG; note confidence interval above.</li>
 </ul>
 </div>
 <div id="model-2-p-value-stepwise-backward-selection-see-appendix" class="section level4">
@@ -127,7 +128,7 @@ model1 &lt;- step(model.all)</code></pre>
 <ul>
 <li>See <a href="#summary">Table of Model 1</a>.</li>
 <li>The <strong>Adjusted R squared value of 0.83</strong> suggests the model is a good fit.</li>
-<li>The model predicts a <strong>improvement to MPG of 2.94</strong> with a manual transmission.</li>
+<li>The model predicts a <strong>improvement to MPG of 2.9</strong> with a manual transmission.</li>
 <li>The decision of whether to accept the model result is more complicated; the p-value of the transmission regressor is barely below the 0.05 significance threshold. Furthermore, plots of both absolute values and residuals show that the manual and automatic transmission values are not identically distributed.</li>
 <li>On balance, the author believes it is more prudent to <strong>draw no conclusion</strong> from the data with regard to the effect of manual or automatic transmission on vehicle fuel economy.</li>
 <li>Repeat the analysis when a dataset with paired manual and automatic transmission cars of the same make and model is available.</li>

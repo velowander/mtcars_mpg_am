@@ -1,9 +1,9 @@
 ---
-output: html_document
+output: pdf_document
 ---
 # Vehicle Fuel Economy Effect of Transmission Type
 ## Executive Summary
-1. This analysis attempts to quantify the impact of selecting a manual or an automatic transmission on vehicle fuel economy, by reference to Road and Track Magazine's list of 32 vehicles from 1974. It attempts to mathematically model the characteristics determining fuel economy of existing cars and isolate the dependence on transmission type from other factors.  
+1. This analysis attempts to quantify the impact of selecting a manual or an automatic transmission on vehicle fuel economy, by reference to [Road and Track Magazine's list of 32 vehicles from 1974](http://stat.ethz.ch/R-manual/R-devel/library/datasets/html/mtcars.html). It attempts to mathematically model the characteristics determining fuel economy of existing cars and isolate the dependence on transmission type from other factors.  
 1. The model predicts an improvement of 2.9 miles per gallon from a manual transmission as compared with an automatic. However, the data do not compellingly support the reliability of the model.
 1. Recommendation: __Do not use the model's result__. Augment the dataset with paired manual and automatic transmission versions of the same make and model and repeat the analysis.
 
@@ -29,16 +29,18 @@ model.all <- lm(mpg ~ factor(am) + factor(cyl) + disp + hp + drat + wt + qsec + 
 model1 <- step(model.all)
 ```
 
-#### <a name="summary" />TABLE OF MPG VS MARGINAL CHANGE IN REGRESSOR VALUES WITH P-VALUES FOR MODEL 1
+#### <a name="summary" />TABLE OF MPG VS MARGINAL CHANGE IN REGRESSORS WITH 95% CONFIDENCE FOR MODEL 1
 ```{r modelSummary, echo=FALSE}
-names(model1$coefficients)[2:4] <- c("am: manual transmission", "wt: per 1000 pounds weight", "qsec: per second of 1/4 mile time")
+names(model1$coefficients) <- c("Base MPG", "am: manual transmission", "wt: per 1000 pounds weight", "qsec: per second of 1/4 mile time")
 summary1 <- summary(model1)
 summary1$call
-summary1$coef[-1, c(1,4)]
+summary1b <- cbind(summary1$coef[, 1], confint(model1), round(summary1$coef[, 4], 3) )
+colnames(summary1b) <- c("Estimate", "lower", "upper", "p-value")
+summary1b
 ```
 * All 3 predictors have a p-value below 0.05. However, the am factor (transmission type) p-value is barely below this threshold.
 * The Adjusted __R squared value of `r round(summary1$adj.r.squared, 2)`__ suggests the model is a good fit.
-* If the AIC report is credible, we reject the null hypothesis and include 3 predictors in the model, noting the marginal statistical significance for the transmission type factor. The model then predicts manual transmission increases fuel economy by approximately `r round(summary1$coef[2, 1], 1)` MPG, assuming we make no other changes.
+* If the AIC report is credible, we reject the null hypothesis and include 3 predictors in the model, noting the marginal statistical significance for the transmission type factor. The model then predicts manual transmission increases fuel economy by an expected __`r round(summary1$coef[2, 1], 1)`__ MPG; note confidence interval above.
 
 #### Model 2: P-Value stepwise backward selection (see [Appendix](#model2iterations))
 As described in [Open Stats Intro](http://www.openintro.org/stat) Chapter 8, the model initially includes all predictors and fits a regression line, calculating the p-value for each regressor for its relevance in the model. The method then eliminates the highest p-valued regressor from the model and refits. This iterative process continues until all predictors are below the significance threshold of 0.05.  
@@ -53,7 +55,7 @@ __The stepwise backward selection resulted in the same model as AIC.__
 
 * See [Table of Model 1](#summary).
 * The __Adjusted R squared value of `r round(summary1$adj.r.squared, 2)`__ suggests the model is a good fit.
-* The model predicts a __improvement to MPG of `r round(summary1$coef[2,1], 2)`__ with a manual transmission.
+* The model predicts a __improvement to MPG of `r round(summary1$coef[2,1], 1)`__ with a manual transmission.
 * The decision of whether to accept the model result is more complicated; the p-value of the transmission regressor is barely below the 0.05 significance threshold. Furthermore, plots of both absolute values and residuals show that the manual and automatic transmission values are not identically distributed.
 * On balance, the author believes it is more prudent to __draw no conclusion__ from the data with regard to the effect of manual or automatic transmission on vehicle fuel economy.
 * Repeat the analysis when a dataset with paired manual and automatic transmission cars of the same make and model is available.
